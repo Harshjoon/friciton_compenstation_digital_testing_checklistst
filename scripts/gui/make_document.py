@@ -30,17 +30,19 @@ def make_document(
     # set paragraph information
     main_paragraph_data     = {
         "{{date}}"                  : meta_data['date'],
-        "{{assembled_by}}"          : meta_data['assembler_name'],
-        "{{assembled_date}}"        : meta_data['assembly_date'],
+        "{{assembled_by}}"          : meta_data['assembler_name'] + "\t",
+        "{{assembled_date}}"        : meta_data['assembly_date'] + "\t" + "\t",
         "{{assembler_signature}}"   : meta_data['assembler_signature'],
         "{{tested_by}}"             : meta_data['tester_name'],
-        "{{tested_date}}"           : meta_data['testing_date'],
+        "{{tested_date}}"           : meta_data['testing_date'] + "               ",
         "{{tester_signature}}"      : meta_data['tester_signature'],
-        "{{approved_by}}"           : meta_data['approver_name'], 
-        "{{approved_date}}"         : meta_data['approval_date'],
+        "{{approved_by}}"           : meta_data['approver_name'] + "\t", 
+        "{{approved_date}}"         : meta_data['approval_date'] + "\t" + "\t",
         "{{approver_signature}}"    : meta_data['approver_signature'],
         "{{end_remarks}}"           : meta_data['end_remarks']
     }
+
+    main_paragraph_data = fix_spaces(main_paragraph_data)
 
     for i,paragraph in enumerate(document.paragraphs):
         for key,value in main_paragraph_data.items():
@@ -112,3 +114,26 @@ def make_document(
 
 
     return None
+
+
+def fix_spaces(meta_data):
+
+    if "{{assembled_by}}" in meta_data.keys():
+        x = 30
+        l = len(meta_data["{{assembled_by}}"]) 
+        if l < x:
+            meta_data["{{assembled_by}}"] = meta_data["{{assembled_by}}"] +  (x - l)*" "
+
+    if "{{tested_by}}" in meta_data.keys():
+        x = 30
+        l = len(meta_data["{{tested_by}}"]) 
+        if l < x:
+            meta_data["{{tested_by}}"] = meta_data["{{tested_by}}"] +  (x - l)*" "
+
+    if "{{approved_by}}" in meta_data.keys():
+        x = 30
+        l = len(meta_data["{{approved_by}}"]) 
+        if l < x:
+            meta_data["{{approved_by}}"] = meta_data["{{approved_by}}"] +  (x - l)*" "
+
+    return meta_data
