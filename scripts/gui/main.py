@@ -14,7 +14,7 @@ TODO
 
 import sys
 import os
-from PyQt6.QtGui import QRegularExpressionValidator
+from PyQt6.QtGui import QRegularExpressionValidator, QPixmap
 from PyQt6.QtCore import Qt, QSize, QRegularExpression
 from PyQt6.QtWidgets import QApplication, QWidget, QLabel
 from PyQt6.QtWidgets import (
@@ -163,6 +163,12 @@ drive"                                        : None,
         text = "No signature found"
         self.assembled_by_signature           = self.make_label(text,580 ,500,10)
         self.assembled_checkbox               = self.make_check_box("",30,502)
+        self.assembler_pixmap                 = QPixmap("../../images/1.png")
+        w,h = 150,40
+        self.assembled_by_signature.setPixmap(self.assembler_pixmap.scaled(
+            w,h,Qt.AspectRatioMode.KeepAspectRatio
+        ))
+        self.assembled_by_signature.adjustSize()
 
         text = "Tested by: "
         self.tested_by_name_label             = self.make_label(text,40 + a,530,10)
@@ -190,7 +196,7 @@ drive"                                        : None,
         self.approved_by_date                 = self.make_label(text,350,560,10)
         text = "No signature found"
         self.approved_by_signature            = self.make_label(text,580,560,10)
-        self.approved_checkbox                 = self.make_check_box("",30,562)
+        self.approved_checkbox                = self.make_check_box("",30,562)
 
         self.save_data_button                 = self.make_button("Save data",40,700)
         self.show_document_button             = self.make_button("Show document",200,700)
@@ -430,6 +436,23 @@ drive"                                        : None,
         self.document_no_label.adjustSize()
 
         return None
+
+
+    def set_signature_image(
+            self,
+            label
+    ):
+        # temporary path
+        self.signature_image_path = "../../images/1.png"
+
+        w,h = 150,40
+        label.setPixmap(self.assembler_pixmap.scaled(
+            w,h,Qt.AspectRatioMode.KeepAspectRatio
+        ))
+        label.adjustSize()
+        
+        return None
+
 
 def main():
     app     = QApplication(sys.argv)

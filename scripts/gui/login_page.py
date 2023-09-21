@@ -29,8 +29,9 @@ from PyQt6.QtWidgets import (
 import sqlite3
 from sqlite3 import Error
 
-from new_user_page import NewUserPage
-from main          import Main_window
+from new_user_page          import NewUserPage
+from main                   import Main_window
+from change_password_page   import ChangePasswordPage
 
 class LoginPage(QWidget):
     def __init__(self):
@@ -75,6 +76,9 @@ class LoginPage(QWidget):
         add_users_button = QPushButton('&Add Users', clicked=self.on_add_user_clicked)
         layout.addWidget(add_users_button,                      3,2,1,1)
 
+        change_password_button = QPushButton('&Change Password', clicked=self.on_change_password)# add slots
+        layout.addWidget(change_password_button,                3,1,1,1)
+
         self.labels['Confirm Password'].setHidden(True)
         self.lineEdits['Confirm Password'].setHidden(True)
 
@@ -100,7 +104,8 @@ class LoginPage(QWidget):
         admin_user      = False
         approver_user   = False
 
-        username_found = False
+        username_found   = False
+        password_correct = False 
 
         db      = sqlite3.connect(self.database_filepath)
         cursor  = db.cursor()
@@ -109,9 +114,10 @@ class LoginPage(QWidget):
         if len(cursor_output)==0:
             print("Username not present.")
         else:
+            username_found = True
             target_username, target_password = cursor_output[0]
             if password == target_password:
-                username_found = True
+                password_correct = True 
                 print("password is correct.")
                 normal_user = True
                 if open_main:
@@ -125,9 +131,10 @@ class LoginPage(QWidget):
         if len(cursor_output)==0:
             print("adminname not present.")
         else:
+            username_found = True
             target_username, target_password = cursor_output[0]
             if password == target_password:
-                username_found = True
+                password_correct = True
                 print("password is correct.")
                 admin_user = True
                 if open_main:
@@ -140,9 +147,10 @@ class LoginPage(QWidget):
         if len(cursor_output)==0:
             print("username not present.")
         else:
+            username_found = True
             target_username, target_password = cursor_output[0]
             if password == target_password:
-                username_found = True
+                password_correct = True
                 print("password is correct.")
                 approver_user = True
                 if open_main:
@@ -171,7 +179,107 @@ class LoginPage(QWidget):
 
         db.close()
 
-        return admin_user
+        return admin_user, username_found
+    
+
+    def new_check_credential(
+            self
+    ):
+        """
+            REQUIREMENTS
+                - Input
+                - Outputs : 
+                    returns if a valid user,
+                    what kind of user it is
+                    
+        """
+
+        username = self.lineEdits['Username'].text()
+        password = self.lineEdits['Password'].text()
+
+        users    = [
+            'normal',
+            'approver',
+            'admin'
+        ]
+        user       = None
+        valid_user = False
+
+        db      = sqlite3.connect(self.database_filepath)
+        cursor  = db.cursor()
+        cursor.execute("SELECT * FROM users WHERE username=?",[username])
+        cursor_output = cursor.fetchall()
+        if len(cursor_output) == 0:
+            print("not a user.")
+        elif len(cursor_output) > 0:
+            user = users[0]
+            u,p = cursor_output[0]
+            if password == p:
+                valid_user = True
+                print("password correct")
+                return valid_user, user
+            return valid_user, user
+        
+        cursor.execute("SELECT * FROM approvers WHERE username=?",[username])
+        cursor_output = cursor.fetchall()
+        if len(cursor_output) == 0:
+            print("not an approver.")
+        elif len(cursor_output) > 0:
+            user = users[1]
+            u,p  = cursor_output[0]   
+            if password == p:
+                valid_user = True
+                print("password correct")
+                return valid_user, user
+            return valid_user, user
+
+        cursor.execute("SELECT * FROM admins WHERE adminname=?",[username])
+        cursor_output = cursor.fetchall()
+        if len(cursor_output) == 0:
+            print("not an admin.")
+        elif len(cursor_output) > 0:
+            user = users[2]
+            u,p  = cursor_output[0]
+            if password == p:
+                valid_user = True
+                print("password correct")
+                return valid_user, user
+            return valid_user, user
+        
+        
+        
+
+
+
+        
+        
+        return None
+    
+    def on_change_password(self):
+
+        admin_user, user_found = self.checkCredential(open_main=False)
+
+        username = self.lineEdits['Username'].text()
+
+        if user_found:
+
+            self.change_pass_page = ChangePasswordPage(
+                username=username,
+                )
+            
+            self.change_pass_page.show()
+            return None
+        else:
+            choice = QMessageBox.critical(
+                None,
+                "Warning",
+                "User not found.",
+                QMessageBox.StandardButton.Ok
+            )
+            if choice == QMessageBox.StandardButton.Ok:
+                return None
+
+        return None
 
     def is_admin_user(self, username):
         admin_user = False
@@ -188,7 +296,7 @@ class LoginPage(QWidget):
 
     def on_add_user_clicked(self):
 
-        admin_user = self.checkCredential(open_main=False)
+        admin_user, user_found = self.checkCredential(open_main=False)
 
         if not admin_user:
             choice = QMessageBox.critical(
