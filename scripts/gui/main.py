@@ -2,14 +2,14 @@
 
 '''
 TODO
-- add login window                   : Pending
-- encryption algorithm for users     : Pending
-- Fixed irregular spaces in document : Pending
+- add login window                      : Done
+- encryption algorithm for users        : Pending
+- Fixed irregular spaces in document    : Pending
 
-- password protect sqlite database   : Pending
-
+- write algorithm for document number   : Done
+- password protect sqlite database      : Pending
 - save data in json and connect it
-  to a database                      : Pending 
+  to a database                         : Pending 
 '''
 
 import sys
@@ -73,9 +73,9 @@ class Main_window(QMainWindow):
         self.actuator_find_button = self.make_button("Find",200,100)
 
 
-        text    = "Document number : 123"
+        text    = "Document number :"
         self.document_no_label       = self.make_label(text,400,60,10)
-        text    = "Revision number    : 123"
+        text    = "Revision number    : 1.0"
         self.revision_no_label       = self.make_label(text,400,80,10)
 
         self.checklist_content = {
@@ -215,6 +215,8 @@ drive"                                        : None,
         self.assembled_checkbox.stateChanged.connect(self.on_assemble_state_change)
         self.tested_checkbox.stateChanged.connect(self.on_tested_state_change)
         self.approved_checkbox.stateChanged.connect(self.on_approved_state_change)
+
+        self.actuator_sno_lineedit.textChanged.connect(self.make_document_number)
 
         return None
     
@@ -409,7 +411,23 @@ drive"                                        : None,
             self
     ):
         
-        
+        # write an algorithm for document number
+        actuator_number = self.actuator_sno_lineedit.toPlainText()
+        if len(actuator_number) > 0:
+            i = len(actuator_number)
+            if i > 5:
+                i = 5
+            act_last_digits = actuator_number[-i:]
+        else:
+            act_last_digits = ""
+
+        time_format     = "%d%m%Y"
+        time_digits     = dt.datetime.now().strftime(format=time_format)
+
+        document_number = "FCTC_" + act_last_digits + "_" + time_digits
+
+        self.document_no_label.setText("Document number : " + document_number)
+        self.document_no_label.adjustSize()
 
         return None
 
