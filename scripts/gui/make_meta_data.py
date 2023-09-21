@@ -45,11 +45,11 @@ def make_meta_data(
 
     meta_data['actuator_serial_number'] = gui_object.actuator_sno_lineedit.toPlainText()
     # set document number, need to do changes in gui
-    #meta_data['document_number']        = gui_object.
-    meta_data['document_number']        = default_meta_data['document_number']
+    meta_data['document_number']        = gui_object.document_no_label.text()[17:]
+    #meta_data['document_number']        = default_meta_data['document_number']
     # set revision number, need to do changes in gui
-    #meta_data['revision_number']        = gui_object.
-    meta_data['revision_number']        = default_meta_data['revision_number']
+    meta_data['revision_number']        = gui_object.revision_no_label.text()[20:]
+    #meta_data['revision_number']        = default_meta_data['revision_number']
 
     date_format = "%d-%m-%Y" 
     date_now    = dt.datetime.now().strftime(format=date_format)
