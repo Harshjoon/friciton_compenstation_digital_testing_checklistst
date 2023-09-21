@@ -1,6 +1,7 @@
 '''
 TODO
-- add approver user
+- add approver user                 : Done
+- add change password option        : Done
 '''
 
 import sys
@@ -152,14 +153,15 @@ class LoginPage(QWidget):
         if not (admin_user or normal_user or approver_user):
             print("Incorrect password.")
 
-            choice = QMessageBox.critical(
-                None,
-                "Warning",
-                "Incorrect password.",
-                QMessageBox.StandardButton.Ok
-            )
-            if choice == QMessageBox.StandardButton.Ok:
-                return None
+            if open_main:
+                choice = QMessageBox.critical(
+                    None,
+                    "Warning",
+                    "Incorrect password.",
+                    QMessageBox.StandardButton.Ok
+                )
+                if choice == QMessageBox.StandardButton.Ok:
+                    return None
 
         if admin_user:
             print("user has admin privlages")
@@ -220,4 +222,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-        
