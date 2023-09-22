@@ -41,6 +41,12 @@ class LoginPage(QWidget):
         # self.setWindowIcon(QIcon(''))
         self.database_filepath = "../../databases/main.db"
 
+        self.users          = [
+            'users',
+            'approvers',
+            'admins'
+        ]
+
         self.window_width, self.window_height = 600,200
         self.setFixedSize( self.window_width, self.window_height )
 
@@ -181,7 +187,6 @@ class LoginPage(QWidget):
 
         return admin_user, username_found
     
-
     def new_check_credential(
             self
     ):
@@ -191,20 +196,11 @@ class LoginPage(QWidget):
                 - Outputs : 
                     returns if a valid user,
                     what kind of user it is
-                    
         """
-
         username = self.lineEdits['Username'].text()
         password = self.lineEdits['Password'].text()
-
-        users    = [
-            'normal',
-            'approver',
-            'admin'
-        ]
         user       = None
         valid_user = False
-
         db      = sqlite3.connect(self.database_filepath)
         cursor  = db.cursor()
         cursor.execute("SELECT * FROM users WHERE username=?",[username])
@@ -212,73 +208,60 @@ class LoginPage(QWidget):
         if len(cursor_output) == 0:
             print("not a user.")
         elif len(cursor_output) > 0:
-            user = users[0]
+            user = self.users[0]
             u,p = cursor_output[0]
             if password == p:
                 valid_user = True
                 print("password correct")
                 return valid_user, user
             return valid_user, user
-        
         cursor.execute("SELECT * FROM approvers WHERE username=?",[username])
         cursor_output = cursor.fetchall()
         if len(cursor_output) == 0:
             print("not an approver.")
         elif len(cursor_output) > 0:
-            user = users[1]
+            user = self.users[1]
             u,p  = cursor_output[0]   
             if password == p:
                 valid_user = True
                 print("password correct")
                 return valid_user, user
             return valid_user, user
-
         cursor.execute("SELECT * FROM admins WHERE adminname=?",[username])
         cursor_output = cursor.fetchall()
         if len(cursor_output) == 0:
             print("not an admin.")
         elif len(cursor_output) > 0:
-            user = users[2]
+            user = self.users[2]
             u,p  = cursor_output[0]
             if password == p:
                 valid_user = True
                 print("password correct")
                 return valid_user, user
-            return valid_user, user
-        
-        
-        
-
-
-
-        
-        
-        return None
+            return valid_user, user    
+        return valid_user, user
     
     def on_change_password(self):
-
-        admin_user, user_found = self.checkCredential(open_main=False)
-
+        print("On change password called.")
+        valid_user, user         = self.new_check_credential()
         username = self.lineEdits['Username'].text()
-
-        if user_found:
-
-            self.change_pass_page = ChangePasswordPage(
+        if valid_user:
+            self.change_pass_page   = ChangePasswordPage(
                 username=username,
-                )
-            
+                user_type=user
+            )
             self.change_pass_page.show()
             return None
-        else:
-            choice = QMessageBox.critical(
-                None,
-                "Warning",
-                "User not found.",
-                QMessageBox.StandardButton.Ok
+        elif user == None:
+            self.show_warning(
+                text="User not found."
             )
-            if choice == QMessageBox.StandardButton.Ok:
-                return None
-
+            return None
+        elif not valid_user and user != None:
+            self.show_warning(
+                text="Incorrect Password"
+            )
+            return None
         return None
 
     def is_admin_user(self, username):
@@ -295,6 +278,8 @@ class LoginPage(QWidget):
         return admin_user
 
     def on_add_user_clicked(self):
+
+        print("on_add_user_clicked called")
 
         admin_user, user_found = self.checkCredential(open_main=False)
 
@@ -314,6 +299,37 @@ class LoginPage(QWidget):
             self.new_user_window.show()
 
         return None
+    
+    def show_message(
+            self,
+            text = "message"
+            ):
+        
+        choice = QMessageBox.information(
+            None,
+            "Warning",
+            text,
+            QMessageBox.StandardButton.Ok,
+            #QMessageBox.StandardButton.No,
+        )
+        if choice == QMessageBox.StandardButton.Ok:
+            return None
+        return None
+    
+    def show_warning(
+            self,
+            text = "warning"
+            ):
+        
+        choice = QMessageBox.critical(
+            None,
+            "Warning",
+            text,
+            QMessageBox.StandardButton.Ok
+        )
+        if choice == QMessageBox.StandardButton.Ok:
+            return None
+        return None
 
 def main():
     print("This is the main function.")
@@ -322,7 +338,6 @@ def main():
     # app.setStyleSheet()
     loginWindow = LoginPage()
     loginWindow.show()
-
     try:
         sys.exit(app.exec())
     except SystemExit:
