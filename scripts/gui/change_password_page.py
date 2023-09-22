@@ -25,10 +25,19 @@ from sqlite3 import Error
 
 
 class ChangePasswordPage(QWidget):
-    def __init__(self, username):
+    def __init__(self, username, user_type):
         super().__init__()
 
+        self.users          = [
+            'users',
+            'approvers',
+            'admins'
+        ]
+
+        
+
         self.username       = username
+        self.user_type      = user_type
 
         self.setWindowTitle('Change password page')
         # set window icon
@@ -85,35 +94,88 @@ class ChangePasswordPage(QWidget):
         new_username        = self.lineEdits['New Username'].text()
         password            = self.lineEdits['Password'].text()
         confirm_password    = self.lineEdits['Confirm Password'].text()
-
+        if new_username == "":
+            self.show_warning("Username cannot be empty")
+            return None
+        if password != confirm_password:
+            self.show_warning("Confirm password does not match.")
+            return None
         # connect to database
         db      = sqlite3.connect(self.database_filepath)
         cursor  = db.cursor()
         cursor.execute("SELECT * FROM users WHERE username=?",[new_username])
-        cursor_output = cursor.fetchall()
+        cursor_output = cursor.fetchall()    
 
-        if len(cursor_output) > 0:
-            print("Username already present. Use different username")
-            choice = QMessageBox.critical(
-                None,
-                "Warning",
-                "Username already exists. Use different username",
-                QMessageBox.StandardButton.Ok
-            )
-            if choice == QMessageBox.StandardButton.Ok:
-                db.close()
+        if new_username != self.username:
+            # see if new user in database
+            if len(cursor_output) > 0:
+                print("Username already present user differect username.")
+                self.show_warning(text="Username already present user differect username.")
                 return None
+            elif len(cursor_output) == 0:
+                # add username and password and remove old username 
+                #'INSERT INTO "users" VALUES(\'admin_1\',\'admin_1\')'
+                cursor.execute(
+                    'INSERT INTO "{0}" VALUES(\'{1}\',\'{2}\')'.format(self.user_type, new_username, password)
+                    )
+                # remove old user
+                cursor.execute(
+                    'DELETE FROM "{0}" WHERE username=?'.format(self.user_type), [self.username]
+                )
+                db.commit()
+                db.close()
+                self.close()
+                return None
+        elif new_username == self.username:
+            db_col_name = {
+                'users'     : 'username',
+                'approvers' : 'username', 
+                'admins'    : 'adminname'
+                }
+            # update password only.
+            cursor.execute(
+                "UPDATE {0} SET {1} = '{2}', password='{3}' WHERE username=? ".format(
+                    self.user_type, db_col_name[self.user_type], new_username, password
+                ), [self.username]
+            )
+            db.commit()
             db.close()
+            self.close()
             return None
-        elif len(cursor_output) == 0:
-            # update username and password.
-
-
-
-            pass
-
-
+        db.close()
         return None
+    
+    def show_message(
+            self,
+            text = "message"
+            ):
+        
+        choice = QMessageBox.information(
+            None,
+            "Warning",
+            text,
+            QMessageBox.StandardButton.Ok,
+            #QMessageBox.StandardButton.No,
+        )
+        if choice == QMessageBox.StandardButton.Ok:
+            return None
+        return None
+    
+    def show_warning(
+            self,
+            text = "warning"
+            ):
+        
+        choice = QMessageBox.critical(
+            None,
+            "Warning",
+            text,
+            QMessageBox.StandardButton.Ok
+        )
+        if choice == QMessageBox.StandardButton.Ok:
+            return None
+        return None
+
     
 def main():
     print("This is the main function.")
