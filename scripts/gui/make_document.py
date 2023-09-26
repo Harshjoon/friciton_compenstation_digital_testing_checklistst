@@ -2,13 +2,13 @@ from docx           import Document
 from docx.oxml      import OxmlElement
 from docx.oxml.ns   import qn
 from docx2pdf       import convert
-
+from docx.shared    import Cm
 
 def make_document(
         meta_data       = {},
         template_path   = "../../documents/template.docx",
         output_path     = "../../documents/checklist_report.docx",
-        save_pdf        = True
+        save_pdf        = True,
 ):
     
     document = Document(template_path)
@@ -106,6 +106,11 @@ def make_document(
                 if key in cell.text:
                     cell.text = cell.text.replace(key,value)
 
+    add_signature_image(
+        document=document,
+        meta_data=meta_data
+        )
+
     # save document
     document.save(output_path)
 
@@ -137,21 +142,74 @@ def fix_spaces(meta_data):
 
 
     if "{{assembled_date}}" in meta_data.keys():
-        x = 30
+        x = 25
         l = len(meta_data["{{assembled_date}}"]) 
         if l < x:
             meta_data["{{assembled_date}}"] = meta_data["{{assembled_date}}"] +  (x - l)*" " + "\t\t"
 
     if "{{tested_date}}" in meta_data.keys():
-        x = 30
+        x = 25
         l = len(meta_data["{{tested_date}}"]) 
         if l < x:
             meta_data["{{tested_date}}"] = meta_data["{{tested_date}}"] +  (x - l)*" " + "\t\t"
 
     if "{{approved_date}}" in meta_data.keys():
-        x = 30
+        x = 25
         l = len(meta_data["{{approved_date}}"]) 
         if l < x:
             meta_data["{{approved_date}}"] = meta_data["{{approved_date}}"] +  (x - l)*" " + "\t\t"
 
     return meta_data
+
+
+def add_signature_image(
+        document                = None,
+        meta_data               = {},
+        assembler_signature_image_path      = "../../images/signatures/no_signature_found.png",
+        tester_signature_image_path         = "../../images/signatures/no_signature_found.png",
+        approver_signature_image_path       = "../../images/signatures/no_signature_found.png"
+):
+    
+    if meta_data["assembler_name"] != "No name found":
+        assembler_signature_image_path      = "../../images/signatures/{0}.png".format(meta_data["assembler_name"])
+
+    if meta_data["tester_name"] != "No name found":
+        tester_signature_image_path         = "../../images/signatures/{0}.png".format(meta_data["tester_name"])
+
+    if meta_data["approver_name"] != "No name found":
+        approver_signature_image_path       = "../../images/signatures/{0}.png".format(meta_data["approver_name"])
+
+    # print("assembler path: ",assembler_signature_image_path)
+    # print("tester path: ",tester_signature_image_path)
+    # print("approver path: ",approver_signature_image_path)
+
+
+    sig_height   = 0.8
+    sig_width    = 2.5
+    for i,paragraph in enumerate(document.paragraphs):        
+        
+        if i == 4:
+            r = paragraph.add_run()
+            r.add_picture(
+                assembler_signature_image_path,
+                height=Cm(sig_height),
+                width=Cm(sig_width)
+            )
+        
+        if i == 6:
+            r = paragraph.add_run()
+            r.add_picture(
+                tester_signature_image_path,
+                height=Cm(sig_height),
+                width=Cm(sig_width)
+            )
+            
+        if i == 8:
+            r = paragraph.add_run()
+            r.add_picture(
+                approver_signature_image_path,
+                height=Cm(sig_height),
+                width=Cm(sig_width)
+            )
+
+    return None

@@ -252,6 +252,8 @@ drive"                                        : None,
             self.assembled_by_name.setText(self.login_details['username'])
             self.assembled_by_date.setText(dt.datetime.now().strftime(format=date_format))
             
+            self.show_signature_image(object=self.assembled_by_signature)
+
             #self.assembled_by_signature
 
         elif not self.assembled_checkbox.isChecked():
@@ -286,6 +288,8 @@ drive"                                        : None,
             self.tested_by_date.setText(dt.datetime.now().strftime(format=date_format))
             #self.tested_by_signature
 
+            self.show_signature_image(object=self.tested_by_signature)
+
         elif not self.tested_checkbox.isChecked():
             self.tested_by_name.setText("No name found")
             self.tested_by_date.setText("No date found")
@@ -313,6 +317,8 @@ drive"                                        : None,
                 self.approved_by_name.setText(self.login_details['username'])
                 self.approved_by_date.setText(dt.datetime.now().strftime(format=date_format))
                 #self.approved_by_signature
+
+                self.show_signature_image(object=self.approved_by_signature)
 
         return None
 
@@ -556,6 +562,18 @@ drive"                                        : None,
             return None
         return None
 
+    def show_signature_image(
+            self,
+            object=None
+    ):
+        
+        object_pixmap           = QPixmap("../../images/signatures/{0}.png".format(self.login_details['username']))
+        w,h = 120,30
+        object.setPixmap(object_pixmap.scaled(
+           w,h,Qt.AspectRatioMode.KeepAspectRatio
+        ))
+        object.adjustSize()
+        return None
 
 def main():
     app     = QApplication(sys.argv)
@@ -563,7 +581,7 @@ def main():
     window  = Main_window(
         admin_user=False,
         login_details={"username":"admin"},
-        approver_user=False
+        approver_user=True
     )
     window.show()
     app.exec()
