@@ -36,9 +36,10 @@ from PyQt6.QtWidgets import (
 
 import datetime as dt
 
-from make_document import make_document
+from make_document  import make_document
 from make_meta_data import make_meta_data
-
+from save_json      import save_json, file_exists, read_json
+from fill_data      import fill_data
 
 class Main_window(QMainWindow):
     def __init__(self,admin_user, login_details, approver_user):
@@ -156,19 +157,21 @@ drive"                                        : None,
         self.assembled_by_date_label          = self.make_label(text,300 ,500,10)
         text = "Signature: "
         self.assembled_by_signature_label     = self.make_label(text,500 ,500,10)
-        text = self.login_details['username']#"No name found"
+        #text = self.login_details['username']#"No name found"
+        text = "No name found"
         self.assembled_by_name                = self.make_label(text,140 + a,500,10)
         text = "No date found"
         self.assembled_by_date                = self.make_label(text,350 ,500,10)
-        text = "No signature found"
+        text = ""#"No signature found"
         self.assembled_by_signature           = self.make_label(text,580 ,500,10)
         self.assembled_checkbox               = self.make_check_box("",30,502)
+        #self.assembled_checkbox.setChecked(True)
         self.assembler_pixmap                 = QPixmap("../../images/1.png")
         w,h = 150,40
-        self.assembled_by_signature.setPixmap(self.assembler_pixmap.scaled(
-            w,h,Qt.AspectRatioMode.KeepAspectRatio
-        ))
-        self.assembled_by_signature.adjustSize()
+        #self.assembled_by_signature.setPixmap(self.assembler_pixmap.scaled(
+        #    w,h,Qt.AspectRatioMode.KeepAspectRatio
+        #))
+        #self.assembled_by_signature.adjustSize()
 
         text = "Tested by: "
         self.tested_by_name_label             = self.make_label(text,40 + a,530,10)
@@ -180,7 +183,7 @@ drive"                                        : None,
         self.tested_by_name                   = self.make_label(text,140 + a,530,10)
         text = "No date found"
         self.tested_by_date                   = self.make_label(text,350,530,10)
-        text = "No signature found"
+        text = ""#"No signature found"
         self.tested_by_signature              = self.make_label(text,580,530,10)
         self.tested_checkbox                  = self.make_check_box("",30,532)
 
@@ -194,7 +197,7 @@ drive"                                        : None,
         self.approved_by_name                 = self.make_label(text,140 + a,560,10)
         text = "No date found"
         self.approved_by_date                 = self.make_label(text,350,560,10)
-        text = "No signature found"
+        text = ""#"No signature found"
         self.approved_by_signature            = self.make_label(text,580,560,10)
         self.approved_checkbox                = self.make_check_box("",30,562)
 
@@ -210,14 +213,14 @@ drive"                                        : None,
     def connect_signals_and_slots(
             self
     ):
-        
         #self.actuator_find_button
 
-        #self.save_data_button
+        self.save_data_button.clicked.connect(self.on_save_clicked)
         self.make_document_button.clicked.connect(self.on_make_document_clicked)
         #self.request_approval_button 
         self.show_document_button.clicked.connect(lambda:  self.show_document(document_path = "../../documents/checklist_report.docx"))
-
+        
+        self.actuator_find_button.clicked.connect(self.on_find_clicked)
         self.assembled_checkbox.stateChanged.connect(self.on_assemble_state_change)
         self.tested_checkbox.stateChanged.connect(self.on_tested_state_change)
         self.approved_checkbox.stateChanged.connect(self.on_approved_state_change)
@@ -387,7 +390,53 @@ drive"                                        : None,
     def on_save_clicked(self):
         """
             Description : Save data in a database
+                          Save data in json
+
+            TODO        : Save data in a database - Pending
+                          Save data in json       - Pending
         """
+        print("on_save_clicked function called.")
+        # show warning for dave data
+        choice = QMessageBox.critical(
+            None,
+            "Warning",
+            "Are you sure you want to save this data?",
+            QMessageBox.StandardButton.Yes,
+            QMessageBox.StandardButton.No,
+        )
+        if choice == QMessageBox.StandardButton.Yes:
+            pass
+        elif choice == QMessageBox.StandardButton.No:
+            return None
+        else:
+            return None
+
+
+        actuator_number         = self.actuator_sno_lineedit.toPlainText()
+        
+        if actuator_number == "":
+            self.show_warning("Cannot have empty actuator number.")
+            return None
+
+        # check if file exists
+        if file_exists(actuator_number=actuator_number):
+            choice = QMessageBox.critical(
+                None,
+                "Warning",
+                "Data exists, Do you want to override it ?",
+                QMessageBox.StandardButton.Yes,
+                QMessageBox.StandardButton.No,
+            )
+            if choice == QMessageBox.StandardButton.Yes:
+                save_json(make_meta_data(self))
+                self.show_message("Data saved.")
+            elif choice == QMessageBox.StandardButton.No:
+                return None
+            else:
+                return None
+        elif not file_exists(actuator_number=actuator_number):
+            save_json(make_meta_data(self))
+            self.show_message("Data saved.")
         return None
     
     def on_make_document_clicked(self):
@@ -437,7 +486,6 @@ drive"                                        : None,
 
         return None
 
-
     def set_signature_image(
             self,
             label
@@ -451,6 +499,61 @@ drive"                                        : None,
         ))
         label.adjustSize()
         
+        return None
+
+    def on_find_clicked(self):
+                
+        actuator_number         = self.actuator_sno_lineedit.toPlainText()
+
+        if file_exists(actuator_number=actuator_number):
+            choice = QMessageBox.critical(
+                None,
+                "Warning",
+                "Do you want to populate the data in gui",
+                QMessageBox.StandardButton.Yes,
+                QMessageBox.StandardButton.No,
+            )
+            if choice == QMessageBox.StandardButton.Yes:
+                fill_data(
+                    gui_object=self,
+                    #meta_data=make_meta_data(self)
+                    meta_data=read_json(actuator_number=actuator_number)
+                )
+                self.show_message("Done.")
+            elif choice == QMessageBox.StandardButton.No:
+                return None
+        elif not file_exists(actuator_number=actuator_number):
+            self.show_warning("Data does not exists.")
+
+        return None
+
+    def show_message(
+            self,
+            text = "message"
+            ):
+        choice = QMessageBox.information(
+            None,
+            "Warning",
+            text,
+            QMessageBox.StandardButton.Ok,
+            #QMessageBox.StandardButton.No,
+        )
+        if choice == QMessageBox.StandardButton.Ok:
+            return None
+        return None
+    
+    def show_warning(
+            self,
+            text = "warning"
+            ):
+        choice = QMessageBox.critical(
+            None,
+            "Warning",
+            text,
+            QMessageBox.StandardButton.Ok
+        )
+        if choice == QMessageBox.StandardButton.Ok:
+            return None
         return None
 
 

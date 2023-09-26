@@ -30,14 +30,14 @@ def make_document(
     # set paragraph information
     main_paragraph_data     = {
         "{{date}}"                  : meta_data['date'],
-        "{{assembled_by}}"          : meta_data['assembler_name'] + "\t",
-        "{{assembled_date}}"        : meta_data['assembly_date'] + "\t" + "\t",
+        "{{assembled_by}}"          : meta_data['assembler_name'],
+        "{{assembled_date}}"        : meta_data['assembly_date'],
         "{{assembler_signature}}"   : meta_data['assembler_signature'],
         "{{tested_by}}"             : meta_data['tester_name'],
-        "{{tested_date}}"           : meta_data['testing_date'] + "               ",
+        "{{tested_date}}"           : meta_data['testing_date'],
         "{{tester_signature}}"      : meta_data['tester_signature'],
-        "{{approved_by}}"           : meta_data['approver_name'] + "\t", 
-        "{{approved_date}}"         : meta_data['approval_date'] + "\t" + "\t",
+        "{{approved_by}}"           : meta_data['approver_name'], 
+        "{{approved_date}}"         : meta_data['approval_date'],
         "{{approver_signature}}"    : meta_data['approver_signature'],
         "{{end_remarks}}"           : meta_data['end_remarks']
     }
@@ -112,7 +112,6 @@ def make_document(
     # save pdf
     convert(output_path, output_path[:-5] + ".pdf")
 
-
     return None
 
 
@@ -122,18 +121,37 @@ def fix_spaces(meta_data):
         x = 30
         l = len(meta_data["{{assembled_by}}"]) 
         if l < x:
-            meta_data["{{assembled_by}}"] = meta_data["{{assembled_by}}"] +  (x - l)*" "
+            meta_data["{{assembled_by}}"] = meta_data["{{assembled_by}}"] +  (x - l)*" " + "\t\t"
 
     if "{{tested_by}}" in meta_data.keys():
         x = 30
         l = len(meta_data["{{tested_by}}"]) 
         if l < x:
-            meta_data["{{tested_by}}"] = meta_data["{{tested_by}}"] +  (x - l)*" "
+            meta_data["{{tested_by}}"] = meta_data["{{tested_by}}"] +  (x - l)*" " + "\t\t"
 
     if "{{approved_by}}" in meta_data.keys():
         x = 30
         l = len(meta_data["{{approved_by}}"]) 
         if l < x:
-            meta_data["{{approved_by}}"] = meta_data["{{approved_by}}"] +  (x - l)*" "
+            meta_data["{{approved_by}}"] = meta_data["{{approved_by}}"] +  (x - l)*" " + "\t\t"
+
+
+    if "{{assembled_date}}" in meta_data.keys():
+        x = 30
+        l = len(meta_data["{{assembled_date}}"]) 
+        if l < x:
+            meta_data["{{assembled_date}}"] = meta_data["{{assembled_date}}"] +  (x - l)*" " + "\t\t"
+
+    if "{{tested_date}}" in meta_data.keys():
+        x = 30
+        l = len(meta_data["{{tested_date}}"]) 
+        if l < x:
+            meta_data["{{tested_date}}"] = meta_data["{{tested_date}}"] +  (x - l)*" " + "\t\t"
+
+    if "{{approved_date}}" in meta_data.keys():
+        x = 30
+        l = len(meta_data["{{approved_date}}"]) 
+        if l < x:
+            meta_data["{{approved_date}}"] = meta_data["{{approved_date}}"] +  (x - l)*" " + "\t\t"
 
     return meta_data
