@@ -1,7 +1,8 @@
 '''
 TODO
-- add approver user                 : Done
-- add change password option        : Done
+- add approver user                     : Done
+- add change password option            : Done
+- Replace all path to absolute path     : Pending
 '''
 
 import sys

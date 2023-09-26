@@ -4,12 +4,14 @@
 TODO
 - add login window                      : Done
 - encryption algorithm for users        : Pending
-- Fixed irregular spaces in document    : Pending
+- Fixed irregular spaces in document    : Done
 
 - write algorithm for document number   : Done
 - password protect sqlite database      : Pending
 - save data in json and connect it
   to a database                         : Pending 
+
+- replace all path to absolute path     : Pending
 '''
 
 import sys
@@ -40,6 +42,7 @@ from make_document  import make_document
 from make_meta_data import make_meta_data
 from save_json      import save_json, file_exists, read_json
 from fill_data      import fill_data
+from send_email     import send_email
 
 class Main_window(QMainWindow):
     def __init__(self,admin_user, login_details, approver_user):
@@ -202,9 +205,10 @@ drive"                                        : None,
         self.approved_checkbox                = self.make_check_box("",30,562)
 
         self.save_data_button                 = self.make_button("Save data",40,700)
-        self.show_document_button             = self.make_button("Show document",200,700)
-        self.make_document_button             = self.make_button("Make document",400,700)
-        self.request_approval_button          = self.make_button("Request approval",600,700)
+        self.show_document_button             = self.make_button("Show document",180,700)
+        self.make_document_button             = self.make_button("Make document",350,700)
+        self.request_approval_button          = self.make_button("Request approval",500,700)
+        self.send_email_button                = self.make_button("Send email",660,700)
 
         self.connect_signals_and_slots()
 
@@ -573,6 +577,15 @@ drive"                                        : None,
            w,h,Qt.AspectRatioMode.KeepAspectRatio
         ))
         object.adjustSize()
+        return None
+
+
+    def on_send_email_clicked(
+            self
+    ):
+        
+        
+        
         return None
 
 def main():
