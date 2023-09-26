@@ -1,5 +1,10 @@
 import datetime as dt
 
+"""
+TODO
+- Replace all path to absolute path     : Pending
+"""
+
 def make_meta_data(
         gui_object,
         default = False

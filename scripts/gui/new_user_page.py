@@ -23,6 +23,11 @@ from PyQt6.QtWidgets import (
 import sqlite3
 from sqlite3 import Error
 
+"""
+TODO
+- Replace all path to absolute path     : Pending
+"""
+
 class NewUserPage(QWidget):
     def __init__(self):
         super().__init__()
