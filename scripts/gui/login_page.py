@@ -3,6 +3,7 @@ TODO
 - add approver user                     : Done
 - add change password option            : Done
 - Replace all path to absolute path     : Pending
+- check for valid actuator number       : Pending
 '''
 
 import sys

@@ -26,6 +26,6 @@ def send_email(
     #attach
     #newmail.Attachments.Add(attach)
     # To display the mail before sending it
-    newmail.Display() 
-    #newmail.Send()   
+    #newmail.Display() 
+    newmail.Send()   
     return None

@@ -36,7 +36,9 @@ from PyQt6.QtWidgets import (
     QPlainTextEdit
 )
 
+import time
 import datetime as dt
+import threading
 
 from make_document  import make_document
 from make_meta_data import make_meta_data
@@ -61,6 +63,10 @@ class Main_window(QMainWindow):
 
     def init_UI(self):
         
+
+        with open("../../user_data/{0}.txt".format(self.login_details['username']), "r") as file:
+            self.email = file.readline()
+
         self.setFixedSize(QSize(self.window_width, self.window_height))
 
         #self.heading_label = QLabel("FRICTION COMPENSATION TESTING CHECKLIST",self)
@@ -456,10 +462,24 @@ drive"                                        : None,
 
         meta_data = make_meta_data(self,default=False)
 
-        make_document(
-            meta_data=meta_data,
-            save_pdf=True
+
+        # make_document_thread = threading.Thread(target=make_document, args=(
+        #     meta_data=meta_data,
+        #     save_pdf = True
+        # ))
+
+        make_document_thread = threading.Thread(
+            target=lambda: make_document(
+                meta_data=meta_data,
+                save_pdf=True
+            )
         )
+        make_document_thread.start()
+
+        # make_document(
+        #     meta_data=meta_data,
+        #     save_pdf=True
+        # )
 
         print(meta_data)
 
@@ -584,7 +604,20 @@ drive"                                        : None,
             self
     ):
         
-        
+        with open("../../user_data/admin.txt", "r") as file:
+            admin_email = file.readline()
+
+        send_email(
+            to=admin_email,
+            cc=[
+                self.email
+            ],
+            # cc=[
+            #     self.email,
+            #     "suraj.dwiwedi@ssinnovations.org"
+            #     ],
+            actuator_no=self.actuator_sno_lineedit.toPlainText()
+        )
         
         return None
 
