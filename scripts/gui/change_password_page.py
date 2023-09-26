@@ -34,8 +34,6 @@ class ChangePasswordPage(QWidget):
             'admins'
         ]
 
-        
-
         self.username       = username
         self.user_type      = user_type
 
