@@ -1,6 +1,6 @@
 from docx           import Document
-from docx.oxml      import OxmlElement
-from docx.oxml.ns   import qn
+#from docx.oxml      import OxmlElement
+#from docx.oxml.ns   import qn
 from docx2pdf       import convert
 from docx.shared    import Cm
 

@@ -2,41 +2,35 @@
 
 '''
 TODO
-- add login window                      : Done
-- encryption algorithm for users        : Pending
-- Fixed irregular spaces in document    : Done
+- make code more efficient for exe              : Pending
 
-- write algorithm for document number   : Done
-- password protect sqlite database      : Pending
+- add login window                              : Done
+- encryption algorithm for users                : Pending
+- Fixed irregular spaces in document            : Done
+
+- write algorithm for document number           : Done
+- password protect sqlite database              : Pending
 - save data in json and connect it
-  to a database                         : Pending 
+  to a database                                 : Pending 
 
-- replace all path to absolute path     : Pending
+- replace all path to absolute path             : Pending
+- loading signature image from save data        : Pending
 '''
 
 import sys
 import os
-from PyQt6.QtGui import QRegularExpressionValidator, QPixmap
-from PyQt6.QtCore import Qt, QSize, QRegularExpression
-from PyQt6.QtWidgets import QApplication, QWidget, QLabel
+from PyQt6.QtGui import QPixmap
+from PyQt6.QtCore import Qt, QSize
+from PyQt6.QtWidgets import QApplication, QLabel
 from PyQt6.QtWidgets import (
     QCheckBox,
     QPushButton,
-    QFileDialog,
-    QLineEdit,
-    QTableWidget,
-    QFormLayout,
-    QTabWidget,
-    QVBoxLayout,
     QMainWindow,
-    QDialog,
-    QDialogButtonBox,
     QMessageBox,
     QComboBox,
     QPlainTextEdit
 )
 
-import time
 import datetime as dt
 import threading
 
@@ -44,7 +38,7 @@ from make_document  import make_document
 from make_meta_data import make_meta_data
 from save_json      import save_json, file_exists, read_json
 from fill_data      import fill_data
-from send_email     import send_email
+#from send_email     import send_email
 
 class Main_window(QMainWindow):
     def __init__(self,admin_user, login_details, approver_user):
@@ -223,13 +217,14 @@ drive"                                        : None,
     def connect_signals_and_slots(
             self
     ):
+        
         #self.actuator_find_button
-
         self.save_data_button.clicked.connect(self.on_save_clicked)
         self.make_document_button.clicked.connect(self.on_make_document_clicked)
-        #self.request_approval_button 
+        self.request_approval_button .clicked.connect(self.on_request_approval_clicked)
         self.show_document_button.clicked.connect(lambda:  self.show_document(document_path = "../../documents/checklist_report.docx"))
-        
+        self.send_email_button.clicked.connect(self.on_send_email_clicked)
+
         self.actuator_find_button.clicked.connect(self.on_find_clicked)
         self.assembled_checkbox.stateChanged.connect(self.on_assemble_state_change)
         self.tested_checkbox.stateChanged.connect(self.on_tested_state_change)
@@ -468,6 +463,8 @@ drive"                                        : None,
         #     save_pdf = True
         # ))
 
+
+        # added threading otherwise windows will think that application has crashed.
         make_document_thread = threading.Thread(
             target=lambda: make_document(
                 meta_data=meta_data,
@@ -549,6 +546,13 @@ drive"                                        : None,
                     #meta_data=make_meta_data(self)
                     meta_data=read_json(actuator_number=actuator_number)
                 )
+
+                self.update_signature_image()
+
+                self.assembled_by_signature.adjustSize()
+                self.tested_by_signature.adjustSize()
+                self.approved_by_signature.adjustSize()
+
                 self.show_message("Done.")
             elif choice == QMessageBox.StandardButton.No:
                 return None
@@ -599,25 +603,63 @@ drive"                                        : None,
         object.adjustSize()
         return None
 
+    def update_signature_image(
+            self
+    ):
+
+        assembler_name      = self.assembled_by_name.text()
+        tester_name         = self.tested_by_name.text()
+        approver_name       = self.approved_by_name.text()
+
+        object_pixmap           = QPixmap("../../images/signatures/{0}.png".format(assembler_name))
+        w,h = 120,30
+        self.assembled_by_signature.setPixmap(object_pixmap.scaled(
+           w,h,Qt.AspectRatioMode.KeepAspectRatio
+        ))
+        self.assembled_by_signature.adjustSize()
+
+        object_pixmap           = QPixmap("../../images/signatures/{0}.png".format(tester_name))
+        w,h = 120,30
+        self.tested_by_signature.setPixmap(object_pixmap.scaled(
+           w,h,Qt.AspectRatioMode.KeepAspectRatio
+        ))
+        self.tested_by_signature.adjustSize()
+
+        object_pixmap           = QPixmap("../../images/signatures/{0}.png".format(approver_name))
+        w,h = 120,30
+        self.approved_by_signature.setPixmap(object_pixmap.scaled(
+           w,h,Qt.AspectRatioMode.KeepAspectRatio
+        ))
+        self.approved_by_signature.adjustSize()
+
+        return None
+
+    def on_request_approval_clicked(
+            self
+    ):
+        
+        self.show_message("Not implemented yet.")
+
+        return None
 
     def on_send_email_clicked(
             self
     ):
-        
-        with open("../../user_data/admin.txt", "r") as file:
-            admin_email = file.readline()
+        self.show_message("Not implemented yet.")
+        # with open("../../user_data/admin.txt", "r") as file:
+        #     admin_email = file.readline()
 
-        send_email(
-            to=admin_email,
-            cc=[
-                self.email
-            ],
-            # cc=[
-            #     self.email,
-            #     "suraj.dwiwedi@ssinnovations.org"
-            #     ],
-            actuator_no=self.actuator_sno_lineedit.toPlainText()
-        )
+        # send_email(
+        #     to=admin_email,
+        #     cc=[
+        #         self.email
+        #     ],
+        #     # cc=[
+        #     #     self.email,
+        #     #     "suraj.dwiwedi@ssinnovations.org"
+        #     #     ],
+        #     actuator_no=self.actuator_sno_lineedit.toPlainText()
+        # )
         
         return None
 
@@ -626,8 +668,8 @@ def main():
     
     window  = Main_window(
         admin_user=False,
-        login_details={"username":"admin"},
-        approver_user=True
+        login_details={"username":"user"},
+        approver_user=False
     )
     window.show()
     app.exec()

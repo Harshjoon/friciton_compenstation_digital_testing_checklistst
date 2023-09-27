@@ -15,8 +15,9 @@ def send_email(
     olmailitem=0x0 #size of the new email
     newmail=ol.CreateItem(olmailitem)
     newmail.Subject= 'Testing checklist of actuator number {0}'.format(actuator_no)
+    #newmail.To='anson.paul@ssinnovations.org'
     newmail.To='harsh.joon@ssinnovations.org'
-    newmail.CC = ";".join(cc)
+    #newmail.CC = ";".join(cc)
 
 
     newmail.Body= 'Hello, This is an auto generated email from FCTC application. Please find the testing report for actutaor no {0}.'.foramt(actuator_no)

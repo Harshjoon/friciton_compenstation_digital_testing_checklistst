@@ -7,7 +7,7 @@ newmail.Subject= 'Testing Mail'
 newmail.To='harsh.joon@ssinnovations.org'
 
 #newmail.CC='harsh.joon@ssinnovations.org'
-newmail.CC='harsh.joon@ssinnovations.org; 1harsh.joon@ssinnovations.org'
+newmail.CC='anson.paul@ssinnovations.org; 1harsh.joon@ssinnovations.org'
 
 newmail.Body= 'Hello, this is a test email to showcase how to send emails from Python and Outlook.'
 #attach='..\\..\\images\\1.png'

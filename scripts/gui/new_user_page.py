@@ -1,27 +1,17 @@
 import sys
 
 from PyQt6.QtWidgets import QApplication, QWidget, QLabel
-from PyQt6.QtGui import QRegularExpressionValidator
-from PyQt6.QtCore import Qt, QSize, QRegularExpression
 from PyQt6.QtWidgets import (
     QCheckBox,
     QPushButton,
-    QFileDialog,
     QLineEdit,
-    QTableWidget,
-    QFormLayout,
-    QTabWidget,
-    QVBoxLayout,
-    QMainWindow,
-    QDialog,
     QGridLayout,
-    QDialogButtonBox,
     QMessageBox,
     QSizePolicy
 )
 
 import sqlite3
-from sqlite3 import Error
+#from sqlite3 import Error
 
 """
 TODO
