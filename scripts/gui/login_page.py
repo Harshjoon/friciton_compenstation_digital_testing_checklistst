@@ -18,7 +18,7 @@ from PyQt6.QtWidgets import (
 )
 
 import sqlite3
-from sqlite3 import Error
+#from sqlite3 import Error
 
 from new_user_page          import NewUserPage
 from main                   import Main_window

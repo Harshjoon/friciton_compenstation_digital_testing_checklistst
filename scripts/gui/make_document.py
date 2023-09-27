@@ -1,7 +1,7 @@
 from docx           import Document
 #from docx.oxml      import OxmlElement
 #from docx.oxml.ns   import qn
-from docx2pdf       import convert
+#from docx2pdf       import convert
 from docx.shared    import Cm
 
 
@@ -14,7 +14,7 @@ def make_document(
         meta_data       = {},
         template_path   = "../../documents/template.docx",
         output_path     = "../../documents/checklist_report.docx",
-        save_pdf        = True,
+        save_pdf        = False,
 ):
     
     document = Document(template_path)
@@ -121,7 +121,10 @@ def make_document(
     document.save(output_path)
 
     # save pdf
-    convert(output_path, output_path[:-5] + ".pdf")
+    """
+        docx2pdf taking to much memory in executable so removed pdf for now.
+    """
+    #convert(output_path, output_path[:-5] + ".pdf")
 
     return None
 

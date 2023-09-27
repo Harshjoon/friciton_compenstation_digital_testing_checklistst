@@ -58,8 +58,8 @@ class Main_window(QMainWindow):
     def init_UI(self):
         
 
-        with open("../../user_data/{0}.txt".format(self.login_details['username']), "r") as file:
-            self.email = file.readline()
+        # with open("../../user_data/{0}.txt".format(self.login_details['username']), "r") as file:
+        #     self.email = file.readline()
 
         self.setFixedSize(QSize(self.window_width, self.window_height))
 

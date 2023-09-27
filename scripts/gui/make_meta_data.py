@@ -13,7 +13,7 @@ def make_meta_data(
     default_meta_data = {
         'actuator_serial_number'            : "No serial no found",
         'document_number'                   : "No document no found",
-        'revision_number'                   : "No revision no found",
+        'revision_number'                   : "No revision no  found",
         'date'                              : "No date found",
         'assembler_name'                    : "No name found",
         'assembly_date'                     : "No date found",
@@ -47,7 +47,6 @@ def make_meta_data(
 
     meta_data = {}
 
-
     meta_data['actuator_serial_number'] = gui_object.actuator_sno_lineedit.toPlainText()
     # set document number, need to do changes in gui
     meta_data['document_number']        = gui_object.document_no_label.text()[17:]
@@ -77,7 +76,6 @@ def make_meta_data(
             meta_data['ch_{}'.format(i + 1)] = u'\u2713'
         else:
             meta_data['ch_{}'.format(i + 1)] = u'\u2717'
-
     
     for i,combobox in enumerate(gui_object.yes_no_combobox):
         meta_data['yn_{}'.format(i+1)] = combobox.currentText()
