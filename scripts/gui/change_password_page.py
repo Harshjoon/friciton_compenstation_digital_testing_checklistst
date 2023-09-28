@@ -96,9 +96,32 @@ class ChangePasswordPage(QWidget):
         if new_username != self.username:
             # see if new user in database
             if len(cursor_output) > 0:
+
+                #if self.user_type == 'admins':
+                """
+                    # show warning to change username password
+                    # only admins can changes someone eles's password
+                    # find a way to see what kind of user it is ?
+                """
+
+                    # choice = QMessageBox.critical(
+                    #     None,
+                    #     "Warning",
+                    #     "Username already exists, Do you want to change its password ?",
+                    #     QMessageBox.StandardButton.Yes,
+                    #     QMessageBox.StandardButton.No,
+                    # )
+                    # if choice == QMessageBox.StandardButton.Yes:
+                        
+                    #     print("yes")
+
+                    # elif choice == QMessageBox.StandardButton.No:
+                    #     return None
+
                 print("Username already present user differect username.")
                 self.show_warning(text="Username already present user differect username.")
                 return None
+
             elif len(cursor_output) == 0:
                 # add username and password and remove old username 
                 #'INSERT INTO "users" VALUES(\'admin_1\',\'admin_1\')'
@@ -132,6 +155,37 @@ class ChangePasswordPage(QWidget):
         db.close()
         return None
     
+
+    def user_type(self, username):
+        user_type = None
+
+        #    'users',
+        #    'approvers',
+        #    'admins'
+
+        db      = sqlite3.connect(self.database_filepath)
+        cursor  = db.cursor()
+        cursor.execute("SELECT * FROM users WHERE username=?",[username])
+        cursor_output = cursor.fetchall()
+        if len(cursor_output) > 0:
+            db.close()
+            return "users"
+        
+        cursor.execute("SELECT * FROM approvers WHERE username=?",[username])
+        cursor_output = cursor.fetchall()
+        if len(cursor_output) > 0:
+            db.close()
+            return "approvers"
+
+
+        cursor.execute("SELECT * FROM admins WHERE adminname=?",[username])
+        cursor_output = cursor.fetchall()
+        if len(cursor_output) > 0:
+            db.close()
+            return "admins"
+
+        return user_type
+
     def show_message(
             self,
             text = "message"

@@ -3,7 +3,7 @@ TODO
 - add approver user                     : Done
 - add change password option            : Done
 - Replace all path to absolute path     : Pending
-- check for valid actuator number       : Pending
+- enable admin to change user password  : Pending
 '''
 
 import sys
@@ -258,6 +258,7 @@ class LoginPage(QWidget):
     def is_admin_user(self, username):
         admin_user = False
 
+        # search username in admin table of the database
         db      = sqlite3.connect(self.database_filepath)
         cursor  = db.cursor()
         cursor.execute("SELECT * FROM admins WHERE adminname=?",[username])
