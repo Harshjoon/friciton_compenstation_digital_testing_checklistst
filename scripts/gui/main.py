@@ -14,7 +14,11 @@ TODO
   to a database                                 : Pending 
 
 - replace all path to absolute path             : Pending
-- loading signature image from save data        : Pending
+- loading signature image from save data        : Done
+
+- write a check for valid actuator number       : Pending
+
+- save word document in a seperate folder       : Done
 '''
 
 import sys
@@ -210,6 +214,11 @@ drive"                                        : None,
         self.request_approval_button          = self.make_button("Request approval",500,700)
         self.send_email_button                = self.make_button("Send email",660,700)
 
+
+        self.show_signature_image(object=self.assembled_by_signature,no_sig=True)
+        self.show_signature_image(object=self.tested_by_signature,no_sig=True)
+        self.show_signature_image(object=self.approved_by_signature,no_sig=True)
+
         self.connect_signals_and_slots()
 
         return None
@@ -266,6 +275,7 @@ drive"                                        : None,
             self.assembled_by_date.setText("No date found")
             self.assembled_by_name.adjustSize()
             self.assembled_by_date.adjustSize()
+            self.show_signature_image(object=self.assembled_by_signature,no_sig=True)
 
         return None
     
@@ -300,6 +310,7 @@ drive"                                        : None,
             self.tested_by_date.setText("No date found")
             self.tested_by_name.adjustSize()
             self.tested_by_date.adjustSize()
+            self.show_signature_image(object=self.tested_by_signature,no_sig=True)
 
         return None
     
@@ -324,6 +335,8 @@ drive"                                        : None,
                 #self.approved_by_signature
 
                 self.show_signature_image(object=self.approved_by_signature)
+            elif not self.approved_checkbox.isChecked():
+                self.show_signature_image(object=self.approved_by_signature,no_sig=True)
 
         return None
 
@@ -406,6 +419,15 @@ drive"                                        : None,
             TODO        : Save data in a database - Pending
                           Save data in json       - Pending
         """
+
+        actuator_number         = self.actuator_sno_lineedit.toPlainText()
+
+
+        # validate actuator number
+        if not self.valid_actuator_number(actuator_number):
+            self.show_warning("Actuator number not valid.")
+            return None
+
         print("on_save_clicked function called.")
         # show warning for dave data
         choice = QMessageBox.critical(
@@ -421,9 +443,6 @@ drive"                                        : None,
             return None
         else:
             return None
-
-
-        actuator_number         = self.actuator_sno_lineedit.toPlainText()
         
         if actuator_number == "":
             self.show_warning("Cannot have empty actuator number.")
@@ -447,6 +466,11 @@ drive"                                        : None,
                 return None
         elif not file_exists(actuator_number=actuator_number):
             save_json(make_meta_data(self))
+            make_document(
+                meta_data=make_meta_data(self),
+                output_path="../../report_data/docx/{}.docx".format(actuator_number)
+            )
+
             self.show_message("Data saved.")
         return None
     
@@ -592,10 +616,14 @@ drive"                                        : None,
 
     def show_signature_image(
             self,
-            object=None
+            object=None,
+            no_sig=False
     ):
-        
-        object_pixmap           = QPixmap("../../images/signatures/{0}.png".format(self.login_details['username']))
+        if not no_sig:
+            object_pixmap           = QPixmap("../../images/signatures/{0}.png".format(self.login_details['username']))
+        elif no_sig:
+            object_pixmap           = QPixmap("../../images/signatures/no_signature_found.png")
+
         w,h = 120,30
         object.setPixmap(object_pixmap.scaled(
            w,h,Qt.AspectRatioMode.KeepAspectRatio
@@ -662,6 +690,22 @@ drive"                                        : None,
         # )
         
         return None
+
+    def valid_actuator_number(
+            self,
+            actuator_number = ""
+    ):
+        bool = False
+
+        '''
+        Example actuator no: 1040101B350
+        '''
+        # length check
+        if len(actuator_number) == 11:
+            bool = True
+        # astype check
+
+        return bool
 
 def main():
     app     = QApplication(sys.argv)
