@@ -136,6 +136,7 @@ class ChangePasswordPage(QWidget):
                 db.close()
                 self.close()
                 return None
+            
         elif new_username == self.username:
             db_col_name = {
                 'users'     : 'username',

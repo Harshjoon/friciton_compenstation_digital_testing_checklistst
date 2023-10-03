@@ -61,31 +61,31 @@ class LoginPage(QWidget):
         self.lineEdits['Confirm Password'].setEchoMode(QLineEdit.EchoMode.Password)
 
         layout.addWidget(self.labels['Username'],                    0,0,1,1)
-        layout.addWidget(self.lineEdits['Username'],            0,1,1,3)
+        layout.addWidget(self.lineEdits['Username'],                 0,1,1,3)
         layout.addWidget(self.labels['Password'],                    1,0,1,1)
-        layout.addWidget(self.lineEdits['Password'],            1,1,1,3)
+        layout.addWidget(self.lineEdits['Password'],                 1,1,1,3)
         layout.addWidget(self.labels['Confirm Password'],            2,0,1,1)
-        layout.addWidget(self.lineEdits['Confirm Password'],    2,1,1,3)
+        layout.addWidget(self.lineEdits['Confirm Password'],         2,1,1,3)
 
         login_button = QPushButton('&Log In', clicked= lambda:  self.checkCredential(open_main=True))
-        layout.addWidget(login_button,                          3,3,1,1)
+        layout.addWidget(login_button,                               3,3,1,1)
 
         add_users_button = QPushButton('&Add Users', clicked=self.on_add_user_clicked)
-        layout.addWidget(add_users_button,                      3,2,1,1)
+        layout.addWidget(add_users_button,                           3,2,1,1)
 
         change_password_button = QPushButton('&Change Password', clicked=self.on_change_password)# add slots
-        layout.addWidget(change_password_button,                3,1,1,1)
+        layout.addWidget(change_password_button,                     3,1,1,1)
 
         self.labels['Confirm Password'].setHidden(True)
         self.lineEdits['Confirm Password'].setHidden(True)
 
         self.status = QLabel('')
         self.status.setStyleSheet('font-size: 25px; color: red;')
-        layout.addWidget(self.status,                           4,0,1,3)
+        layout.addWidget(self.status,                                4,0,1,3)
 
     def initUI(self):
         return None
-    
+
     def checkCredential(self, open_main=True):
 
         username = self.lineEdits['Username'].text()

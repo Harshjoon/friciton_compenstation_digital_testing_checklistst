@@ -19,6 +19,7 @@ TODO
 - write a check for valid actuator number       : Pending
 
 - save word document in a seperate folder       : Done
+- add check for if document is already open     : Pending
 '''
 
 import sys
@@ -495,6 +496,7 @@ drive"                                        : None,
                 save_pdf=True
             )
         )
+        
         make_document_thread.start()
 
         # make_document(
@@ -674,6 +676,16 @@ drive"                                        : None,
             self
     ):
         self.show_message("Not implemented yet.")
+
+        """
+        TODO
+        - set the reciver email and cc email addresses.
+        - algorithm to email not found.
+        - send email but first give a warning message.
+        """
+
+
+
         # with open("../../user_data/admin.txt", "r") as file:
         #     admin_email = file.readline()
 
