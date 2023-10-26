@@ -120,6 +120,12 @@ def make_document(
     # save document
     document.save(output_path)
 
+
+    # save to commin shared folder
+    
+    common_shared_out_path = "Z:/"
+    document.save(output_path)
+
     # save pdf
     """
         docx2pdf taking to much memory in executable so removed pdf for now.

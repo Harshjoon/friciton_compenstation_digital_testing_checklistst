@@ -43,7 +43,7 @@ from make_document  import make_document
 from make_meta_data import make_meta_data
 from save_json      import save_json, file_exists, read_json
 from fill_data      import fill_data
-#from send_email     import send_email
+from send_email     import send_email
 
 class Main_window(QMainWindow):
     def __init__(self,admin_user, login_details, approver_user):
@@ -55,9 +55,7 @@ class Main_window(QMainWindow):
 
         #print(login_details['username'])
         self.login_details      = login_details
-
         self.meta_data          = {}
-
         self.init_UI()
 
     def init_UI(self):
@@ -683,21 +681,16 @@ drive"                                        : None,
         - algorithm to email not found.
         - send email but first give a warning message.
         """
-
-
-
-        # with open("../../user_data/admin.txt", "r") as file:
+        # with open("../../user_data/emails/admin.txt", "r") as file:
         #     admin_email = file.readline()
+
+        # cc = []
+        # with open("../../user_data/emails/cc.txt", "r") as file:
+        #     cc = file.readlines()[0].split(',')
 
         # send_email(
         #     to=admin_email,
-        #     cc=[
-        #         self.email
-        #     ],
-        #     # cc=[
-        #     #     self.email,
-        #     #     "suraj.dwiwedi@ssinnovations.org"
-        #     #     ],
+        #     cc=cc,
         #     actuator_no=self.actuator_sno_lineedit.toPlainText()
         # )
         
@@ -707,17 +700,21 @@ drive"                                        : None,
             self,
             actuator_number = ""
     ):
-        bool = False
+        bool = True
 
         '''
         Example actuator no: 1040101B350
         '''
         # length check
-        if len(actuator_number) == 11:
-            bool = True
+        #if len(actuator_number) == 11:
+        #    bool = True
         # astype check
 
         return bool
+
+
+    def save_data_on_common_shared(self):
+        return None
 
 def main():
     app     = QApplication(sys.argv)
