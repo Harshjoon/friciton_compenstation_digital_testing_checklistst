@@ -4,7 +4,6 @@ from docx           import Document
 #from docx2pdf       import convert
 from docx.shared    import Cm
 
-
 """
 TODO
 - Replace all path to absolute path     : Pending
